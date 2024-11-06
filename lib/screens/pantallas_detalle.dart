@@ -59,7 +59,7 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
                   ),
 
 
-                  //me canse de meter todo dentro de padding() asi que use una caja vacia como un espaciado
+                  //caja vacia como un espaciado
                   const SizedBox(height: 8),
                   Text(
                     product.description ?? 'NO EXISTE DESCRIPCION',

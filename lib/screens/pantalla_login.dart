@@ -1,3 +1,4 @@
+
 import 'package:examen2_eduardoflores/screens/pantalla_categorias.dart';
 import 'package:flutter/material.dart';
 
@@ -23,9 +24,7 @@ class PantallaLogin extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20.0),
               child: SizedBox(
           height: 200,
-          child: Image.network(
-            'https://abstracta.us/wp-content/uploads/2024/11/software-testing-tools-compressed-2048x1365.jpg',
-          ),
+          child: Image.asset('lib/assets/imagen.jpg'),
               ),
             ),
             Padding(

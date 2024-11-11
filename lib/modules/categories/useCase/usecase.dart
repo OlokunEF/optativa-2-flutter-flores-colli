@@ -1,15 +1,21 @@
+import 'package:examen2_eduardoflores/infrastructure/app/useCase/use_case.dart';
 import 'package:examen2_eduardoflores/modules/categories/domain/dto/dto.dart';
 import 'package:examen2_eduardoflores/modules/categories/domain/repository/repository.dart';
+import 'package:localstorage/localstorage.dart';
 
 
-//esta funcion realmente no hace nada
-//simplemente esta de placeholder de momento para usar a futuro
-class CategoriesUseCase {
-  final CategoryRepository repository;
+class CategoriesUseCase implements UseCase<List<CategoryDTO>, void> {
+  final CategoryRepository repositorio;
 
-  CategoriesUseCase(this.repository);
+  CategoriesUseCase(this.repositorio);
+  final LocalStorage localstorage = LocalStorage('localstorage');
 
-  Future<List<CategoryDTO>> execute() {
-    return repository.fetchCategories();
+  @override
+  Future<List<CategoryDTO>> execute(void params) async {
+    //para probar si esto sirve simplemente cvambiar el nombre de la variable
+    if (localstorage.getItem('tokendeacceso') == null) {
+      throw Exception('No se encontro ningun Token');
+    }
+    return repositorio.execute(params);
   }
 }

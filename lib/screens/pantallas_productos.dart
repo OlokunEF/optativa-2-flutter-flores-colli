@@ -9,7 +9,7 @@ class PantallasProductos extends StatefulWidget {
   final String category;
 
   //decibimos el valor que mandamos en pantalla_categoria
-  const PantallasProductos({super.key, required this.category});
+  PantallasProductos({required this.category});
 
   @override
   _PantallasProductosState createState() => _PantallasProductosState();
@@ -33,7 +33,7 @@ class _PantallasProductosState extends State<PantallasProductos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: 
+        title: Center(child: 
         Text('Products',
           style: TextStyle(color: Colors.white),
           textAlign: TextAlign.center,
@@ -41,7 +41,6 @@ class _PantallasProductosState extends State<PantallasProductos> {
         ),
         backgroundColor: Colors.blue,
         automaticallyImplyLeading: false, 
-
       ),
 
       //otro future list
@@ -49,12 +48,17 @@ class _PantallasProductosState extends State<PantallasProductos> {
         future: productsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }  else {
-            return Padding(
+            return Center(child: CircularProgressIndicator());
+          } 
+          else {
+            if(snapshot.hasError) {
+              return Center(child: Text('Error al cargar los productos: ${snapshot.error}'));
+            }
+             else {
+              return Padding(
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
@@ -81,28 +85,28 @@ class _PantallasProductosState extends State<PantallasProductos> {
                         children: [
                           Expanded(
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
                               child: Image.network(
                                 product.thumbnail,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                          const Divider(),
+                          Divider(),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: [
                                 Text(
                                   product.title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.0,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 4),
-                                const Text(
+                                SizedBox(height: 4),
+                                Text(
                                   'Detalles',
                                   style: TextStyle(
                                     color: Colors.blue,
@@ -119,6 +123,7 @@ class _PantallasProductosState extends State<PantallasProductos> {
                 },
               ),
             );
+          }            
           }
         },
       ),

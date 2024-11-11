@@ -1,4 +1,5 @@
 class DetalleProductoDTO {
+  final int id;
   final String title;
   final List<String> images;
   final String description;
@@ -6,6 +7,7 @@ class DetalleProductoDTO {
   final int stock;
 
   DetalleProductoDTO({
+    required this.id,
     required this.title,
     required this.images,
     required this.description,
@@ -15,6 +17,7 @@ class DetalleProductoDTO {
 
   factory DetalleProductoDTO.fromJson(Map<String, dynamic> json) {
     return DetalleProductoDTO(
+      id: json['id'] as int,
       title: json['title'] as String,
       images: List<String>.from(json['images'] as List),
       description: json['description'] as String,

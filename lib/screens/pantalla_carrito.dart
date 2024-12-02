@@ -1,5 +1,6 @@
-// pantalla_carrito.dart
-import 'package:examen2_eduardoflores/modules/detallado/domain/dto/carritoDTO.dart';
+
+import 'package:examen2_eduardoflores/modules/carrito/domain/dto/carritoDTO.dart';
+import 'package:examen2_eduardoflores/screens/pantalla_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -50,13 +51,8 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Carrito - Total: \$${totalAmount.toStringAsFixed(2)}',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: const BarraNavegadora(title: 'Carrito'), //barra de navegacion
+
       body: carrito.isEmpty
           //si el carrito esta vacio mostramos un mensaje
           ? Center(child: Text('El carrito está vacío.'))
@@ -83,6 +79,23 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                 );
               },
             ),
+    bottomNavigationBar: Container(
+      padding: EdgeInsets.all(16.0),
+      color: Colors.blue,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+      Text(
+        'Total:',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      Text(
+        '\$${totalAmount.toStringAsFixed(2)}',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+        ],
+      ),
+    ),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:examen2_eduardoflores/modules/login/domain/dto/credenciales_usuario.dart';
 import 'package:examen2_eduardoflores/modules/login/useCase/usecase.dart';
-import 'package:examen2_eduardoflores/rutas/routers.dart';
 import 'package:examen2_eduardoflores/screens/pantalla_categorias.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';

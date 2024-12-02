@@ -1,6 +1,7 @@
 import 'package:examen2_eduardoflores/modules/categories/domain/dto/dto.dart';
 import 'package:examen2_eduardoflores/modules/categories/domain/repository/repository.dart';
 import 'package:examen2_eduardoflores/modules/categories/useCase/usecase.dart';
+import 'package:examen2_eduardoflores/screens/pantalla_navigator.dart';
 import 'package:examen2_eduardoflores/screens/pantallas_productos.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
@@ -28,16 +29,7 @@ class _PantallaCategoriasState extends State<PantallaCategorias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Categorias',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false, 
-      ),
+      appBar: const BarraNavegadora(title: 'Categorias'), //barra de navegacion
 
       //future builder es como un list builder pero con cosas asincronas, como promesas.
       body: FutureBuilder<List<CategoryDTO>>(

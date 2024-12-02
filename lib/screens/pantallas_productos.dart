@@ -1,6 +1,7 @@
 import 'package:examen2_eduardoflores/modules/productos/domain/dto/dto.dart';
 import 'package:examen2_eduardoflores/modules/productos/domain/repository/repository.dart';
 import 'package:examen2_eduardoflores/modules/productos/useCase/usecase.dart';
+import 'package:examen2_eduardoflores/screens/pantalla_navigator.dart';
 import 'package:examen2_eduardoflores/screens/pantallas_detalle.dart';
 import 'package:flutter/material.dart';
 
@@ -20,11 +21,10 @@ class _PantallasProductosState extends State<PantallasProductos> {
   late Future<List<ProductoDTO>> productsFuture;
 
 
-//inicializamos los valores
+  //inicializamos los valores
   @override
   void initState() {
     super.initState();
-    //nota: el use case no hace nada de momento
     fetchProductsUseCase = ProductoUseCase(ProductoRepository());
     productsFuture = fetchProductsUseCase.execute(widget.category);
   }
@@ -32,16 +32,7 @@ class _PantallasProductosState extends State<PantallasProductos> {
    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: 
-        Text('Products',
-          style: TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-        ),
-        backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false, 
-      ),
+      appBar: const BarraNavegadora(title: 'Productos'), //barra de navegacion
 
       //otro future list
       body: FutureBuilder<List<ProductoDTO>>(

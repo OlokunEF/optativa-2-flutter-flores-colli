@@ -1,8 +1,12 @@
-import 'package:examen2_eduardoflores/modules/detallado/domain/dto/carritoDTO.dart';
+import 'package:examen2_eduardoflores/modules/carrito/domain/dto/carritoDTO.dart';
+import 'package:examen2_eduardoflores/modules/carrito/domain/repository/agregarRepository.dart';
+import 'package:examen2_eduardoflores/modules/carrito/useCase/agregarCarrito.dart';
 import 'package:examen2_eduardoflores/modules/detallado/domain/dto/dto.dart';
 import 'package:examen2_eduardoflores/modules/detallado/domain/repository/repository.dart';
 import 'package:examen2_eduardoflores/modules/detallado/useCase/useCase.dart';
-import 'package:examen2_eduardoflores/screens/pantalla_carrito.dart';
+import 'package:examen2_eduardoflores/modules/vistos/domain/repository/agregarrepository.dart';
+import 'package:examen2_eduardoflores/modules/vistos/useCase/agregarUseCase.dart';
+import 'package:examen2_eduardoflores/screens/pantalla_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -18,6 +22,8 @@ class PantallasDetalle extends StatefulWidget {
 
 class _PantallasDetalleState extends State<PantallasDetalle> {
   final DetalleProductoUseCase detalleProductoUseCase = DetalleProductoUseCase(DetalleProductoRepository());
+  final AddProductoVistoUseCase addProductoVistoUseCase = AddProductoVistoUseCase(AddProductoVistosRepository());
+
   late Future<DetalleProductoDTO> productFuture;
   var quantity = 1;
   LocalStorage carritoLocalStorage = LocalStorage('carrito');
@@ -32,10 +38,8 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Detalle de producto', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: const BarraNavegadora(title: 'Detallado'), //barra de navegacion
+
       body: FutureBuilder<DetalleProductoDTO>(
         future: productFuture,
         builder: (context, snapshot) {//snapshot es el objeto que devuelve la promesa
@@ -47,6 +51,12 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
             }
             else{
             final product = snapshot.data!;
+
+            print("asdf");
+            //agrergamos el producto a la lista de productos vistos
+            addProductoVistoUseCase.execute(product);
+
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -95,6 +105,7 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () {
+                            final AgregarCarritoUseCase addToCartUseCase = AgregarCarritoUseCase(AgregarCarritoRepository());
 
                             //creamos un objeto de tipo CarritoDTO con los datos del producto
                            CarritoDTO ItemCarrito = CarritoDTO.fromJson({
@@ -104,41 +115,8 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
                             'quantity': quantity,
                             'price': product.price,
                           });
-
-                          List<dynamic> carritoJson = carritoLocalStorage.getItem('carrito') ?? [];
-                          List<CarritoDTO> carrito = carritoJson.map((item) => CarritoDTO.fromJson(Map<String, dynamic>.from(item))).toList();
-
-                          int carritoIndex = carrito.indexWhere((element) => element.id == product.id.toString());
-
-                          //si el producto no esta en el carrito lo agregamos
-                          if (carritoIndex == -1) {
-                            //si el carrito tiene mas de 7 productos no permitimos agregar mas
-                            if (carrito.length > 7) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text('El carrito esta lleno'),
-                                duration: Duration(seconds: 2),
-                              ));
-                              return;
-                            }
-
-                            
-                            carrito.add(ItemCarrito);
-                          } 
-                          //si el producto ya esta en el carrito solo aumentamos la cantidad y precio
-                          else {
-                            carrito[carritoIndex].quantity += quantity;
-                            carrito[carritoIndex].totalPrice = carrito[carritoIndex].price * carrito[carritoIndex].quantity;
-
-                            if (carrito[carritoIndex].quantity > product.stock) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text('No hay suficiente stock'),
-                                duration: Duration(seconds: 2),
-                              ));
-                              return;
-                            }
-                          }
-
-                          carritoLocalStorage.setItem('carrito', carrito.map((item) => item.toJson()).toList());
+                          //y los insertamos en el carrito
+                            addToCartUseCase.execute(ItemCarrito);
 
 
                           },
@@ -183,43 +161,50 @@ class _PantallasDetalleState extends State<PantallasDetalle> {
                     ),
                       ],
                     ),
-                    SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaCarrito()));
-
-                      },
-                      icon: Icon(Icons.shopping_cart, color: Colors.white),
-                      label: Text('Ver Carrito', style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    SizedBox(height: 16),  
+                    const SizedBox(height: 8),
+                  ...product.reviews.map((review) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  review.reviewerName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '⭐ ${review.rating}',
+                                  style: const TextStyle(color: Colors.amber),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(review.comment),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Fecha: ${review.date.toLocal()}'.split(' ')[0],
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                    ),
-                    ),
-                    SizedBox(height: 16),
-
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        carritoLocalStorage.clear();
-                      },
-                      icon: Icon(Icons.delete_sweep, color: Colors.white),
-                      label: Text('Vaciar carrito', style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        ),
-                    ),
-                    ),
+                      ),
+                    );
+                  }).toList(),
                 ],
               ),
             );
-            }
-            
+            }            
           }
         },
       ),
